@@ -23,7 +23,8 @@ export const getGeminiResponse = async (imageData: any) => {
     throw new Error("Gemini API not initialized");
   }
 
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro-vision" });
+  // Changed from 'gemini-1.5-pro-vision' to 'gemini-pro-vision'
+  const model = genAI.getGenerativeModel({ model: "gemini-pro-vision" });
   
   const prompt = `You are a prompt generator. Write a prompt such that an image generator model would create a most identical picture as the image given to you. Be detailed but concise.`;
 
