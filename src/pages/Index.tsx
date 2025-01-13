@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import ImageUpload from "@/components/ImageUpload";
 import PromptDisplay from "@/components/PromptDisplay";
 import { useToast } from "@/components/ui/use-toast";
+import { fileToGenerativePart, getGeminiResponse } from "@/utils/gemini";
 
 const Index = () => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
