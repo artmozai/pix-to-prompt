@@ -6,6 +6,7 @@ import ImageUpload from "@/components/ImageUpload";
 import PromptDisplay from "@/components/PromptDisplay";
 import { useToast } from "@/components/ui/use-toast";
 import { fileToGenerativePart, getGeminiResponse, initializeGemini } from "@/utils/gemini";
+import { Moon, Sun, Copy } from "lucide-react";
 
 const Index = () => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -15,6 +16,16 @@ const Index = () => {
   const [apiKey, setApiKey] = useState("");
   const { toast } = useToast();
 
+  // Dark mode state
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
+
+  useEffect(() => {
+    // Set initial theme from localStorage or default to dark
+    const savedTheme = localStorage.getItem("theme") as "dark" | "light" || "dark";
+    setTheme(savedTheme);
+    document.documentElement.classList.toggle("dark", savedTheme === "dark");
+  }, []);
+
   useEffect(() => {
     const savedApiKey = localStorage.getItem("gemini_api_key");
     if (savedApiKey) {
@@ -22,6 +33,13 @@ const Index = () => {
       initializeGemini(savedApiKey);
     }
   }, []);
+
+  const toggleTheme = () => {
+    const newTheme = theme === "dark" ? "light" : "dark";
+    setTheme(newTheme);
+    localStorage.setItem("theme", newTheme);
+    document.documentElement.classList.toggle("dark", newTheme === "dark");
+  };
 
   const handleApiKeySubmit = () => {
     if (!apiKey.trim()) {
@@ -84,14 +102,37 @@ const Index = () => {
     }
   };
 
+  const copyPrompt = async () => {
+    if (generatedPrompt) {
+      try {
+        await navigator.clipboard.writeText(generatedPrompt);
+        toast({
+          title: "Success",
+          description: "Prompt copied to clipboard",
+        });
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to copy prompt",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted p-4 md:p-8">
       <div className="max-w-7xl mx-auto space-y-8">
-        <div className="text-center space-y-2">
-          <h1 className="text-4xl font-bold tracking-tight">Image to Prompt Generator</h1>
-          <p className="text-muted-foreground">
-            Upload an image and get an AI-generated prompt that describes it
-          </p>
+        <div className="flex justify-between items-center">
+          <div className="text-center flex-1">
+            <h1 className="text-4xl font-bold tracking-tight">Image to Prompt Generator</h1>
+            <p className="text-muted-foreground">
+              Upload an image and get an AI-generated prompt that describes it
+            </p>
+          </div>
+          <Button variant="outline" size="icon" onClick={toggleTheme}>
+            {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+          </Button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -119,11 +160,26 @@ const Index = () => {
                   />
                   <Button onClick={handleApiKeySubmit}>Save Key</Button>
                 </div>
+                <a
+                  href="https://aistudio.google.com/apikey"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-primary hover:underline"
+                >
+                  Get your Gemini API key here
+                </a>
               </div>
             </Card>
 
             <Card className="p-6 space-y-6">
-              <h2 className="text-xl font-semibold">Generated Result</h2>
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-semibold">Generated Result</h2>
+                {generatedPrompt && (
+                  <Button variant="outline" size="icon" onClick={copyPrompt}>
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
               <PromptDisplay
                 prompt={generatedPrompt}
                 isLoading={isLoading}
