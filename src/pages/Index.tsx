@@ -86,7 +86,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted p-4 md:p-8">
-      <div className="max-w-4xl mx-auto space-y-8">
+      <div className="max-w-7xl mx-auto space-y-8">
         <div className="text-center space-y-2">
           <h1 className="text-4xl font-bold tracking-tight">Image to Prompt Generator</h1>
           <p className="text-muted-foreground">
@@ -94,35 +94,45 @@ const Index = () => {
           </p>
         </div>
 
-        <Card className="p-6 space-y-4">
-          <div className="space-y-2">
-            <h2 className="text-lg font-semibold">Gemini API Key</h2>
-            <div className="flex gap-2">
-              <Input
-                type="password"
-                placeholder="Enter your Gemini API key"
-                value={apiKey}
-                onChange={(e) => setApiKey(e.target.value)}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Left Column - Image Upload */}
+          <Card className="p-6 space-y-6">
+            <h2 className="text-xl font-semibold">Upload Image</h2>
+            <ImageUpload
+              onImageUpload={handleImageUpload}
+              imagePreview={imagePreview}
+              isLoading={isLoading}
+            />
+          </Card>
+
+          {/* Right Column - API Key and Results */}
+          <div className="space-y-6">
+            <Card className="p-6 space-y-4">
+              <div className="space-y-2">
+                <h2 className="text-xl font-semibold">Gemini API Key</h2>
+                <div className="flex gap-2">
+                  <Input
+                    type="password"
+                    placeholder="Enter your Gemini API key"
+                    value={apiKey}
+                    onChange={(e) => setApiKey(e.target.value)}
+                  />
+                  <Button onClick={handleApiKeySubmit}>Save Key</Button>
+                </div>
+              </div>
+            </Card>
+
+            <Card className="p-6 space-y-6">
+              <h2 className="text-xl font-semibold">Generated Result</h2>
+              <PromptDisplay
+                prompt={generatedPrompt}
+                isLoading={isLoading}
+                onGenerate={generatePrompt}
+                hasImage={!!selectedImage}
               />
-              <Button onClick={handleApiKeySubmit}>Save Key</Button>
-            </div>
+            </Card>
           </div>
-        </Card>
-
-        <Card className="p-6 space-y-6">
-          <ImageUpload
-            onImageUpload={handleImageUpload}
-            imagePreview={imagePreview}
-            isLoading={isLoading}
-          />
-
-          <PromptDisplay
-            prompt={generatedPrompt}
-            isLoading={isLoading}
-            onGenerate={generatePrompt}
-            hasImage={!!selectedImage}
-          />
-        </Card>
+        </div>
       </div>
     </div>
   );
