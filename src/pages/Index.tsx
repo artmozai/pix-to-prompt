@@ -3,10 +3,15 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import ImageUpload from "@/components/ImageUpload";
-import PromptDisplay from "@/components/PromptDisplay";
 import { useToast } from "@/components/ui/use-toast";
 import { fileToGenerativePart, getGeminiResponse, initializeGemini } from "@/utils/gemini";
-import { Moon, Sun, Copy } from "lucide-react";
+import { Moon, Sun, Copy, Search } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const Index = () => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -16,6 +21,8 @@ const Index = () => {
   const [apiKey, setApiKey] = useState("");
   const { toast } = useToast();
   const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme") as "dark" | "light" || "dark";
@@ -30,6 +37,15 @@ const Index = () => {
       initializeGemini(savedApiKey);
     }
   }, []);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      window.open(`https://artmozai.blogspot.com/search?q=${encodeURIComponent(searchQuery)}`, '_blank');
+      setIsSearchOpen(false);
+      setSearchQuery("");
+    }
+  };
 
   const toggleTheme = () => {
     const newTheme = theme === "dark" ? "light" : "dark";
@@ -118,14 +134,20 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <nav className="border-b bg-card">
+    <div className="min-h-screen bg-background pt-16">
+      <nav className="fixed top-0 left-0 right-0 border-b bg-card z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <h1 className="text-xl font-bold">Image to Prompt</h1>
+            <div className="flex items-center gap-6">
+              <a href="/" className="text-xl font-bold">Beranda</a>
+              <a href="https://artmozai.blogspot.com/" target="_blank" rel="noopener noreferrer" className="text-sm hover:text-primary">Blog</a>
+              <a href="https://artmozai.hashnode.dev/" target="_blank" rel="noopener noreferrer" className="text-sm hover:text-primary">Hashnode</a>
+              <a href="https://stock.adobe.com/uk/contributor/211463521/artmozai" target="_blank" rel="noopener noreferrer" className="text-sm hover:text-primary">Buy Image</a>
             </div>
             <div className="flex items-center gap-4">
+              <Button variant="ghost" size="icon" onClick={() => setIsSearchOpen(true)}>
+                <Search className="h-5 w-5" />
+              </Button>
               <Button variant="outline" size="icon" onClick={toggleTheme}>
                 {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
               </Button>
@@ -133,6 +155,24 @@ const Index = () => {
           </div>
         </div>
       </nav>
+
+      <Dialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Search Blog</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleSearch} className="space-y-4">
+            <Input
+              placeholder="Enter your search query..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <Button type="submit" className="w-full">
+              Search
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       <main className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
         <div className="space-y-8">
