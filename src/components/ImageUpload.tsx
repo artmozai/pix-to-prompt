@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -34,9 +34,9 @@ const ImageUpload = ({ onImageUpload, imagePreview, isLoading }: ImageUploadProp
       <Card
         {...getRootProps()}
         className={cn(
-          "border-2 border-dashed rounded-lg cursor-pointer transition-colors duration-200",
-          isDragActive ? "border-primary bg-primary/5" : "border-muted-foreground/25",
-          "hover:border-primary/50"
+          "rounded-lg cursor-pointer transition-colors duration-200",
+          isDragActive ? "bg-primary/5" : "",
+          "hover:bg-accent/50"
         )}
       >
         <input {...getInputProps()} />

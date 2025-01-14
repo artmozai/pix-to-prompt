@@ -6,7 +6,7 @@ import ImageUpload from "@/components/ImageUpload";
 import PromptDisplay from "@/components/PromptDisplay";
 import { useToast } from "@/components/ui/use-toast";
 import { fileToGenerativePart, getGeminiResponse, initializeGemini } from "@/utils/gemini";
-import { Moon, Sun, Copy, Search } from "lucide-react";
+import { Moon, Sun, Copy } from "lucide-react";
 
 const Index = () => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -119,7 +119,6 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Navbar */}
       <nav className="border-b bg-card">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -145,17 +144,22 @@ const Index = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Left Column - Image Upload */}
-            <Card className="p-6 space-y-6">
-              <h2 className="text-xl font-semibold">Upload Image</h2>
+            <div className="space-y-4">
               <ImageUpload
                 onImageUpload={handleImageUpload}
                 imagePreview={imagePreview}
                 isLoading={isLoading}
               />
-            </Card>
+              <Button
+                onClick={generatePrompt}
+                disabled={!selectedImage || isLoading}
+                className="w-full bg-primary hover:bg-primary/90"
+                size="lg"
+              >
+                {isLoading ? "Generating..." : "Generate Prompt"}
+              </Button>
+            </div>
 
-            {/* Right Column - API Key and Results */}
             <div className="space-y-6">
               <Card className="p-6 space-y-4">
                 <div className="space-y-2">
@@ -180,22 +184,19 @@ const Index = () => {
                 </div>
               </Card>
 
-              <Card className="p-6 space-y-6">
-                <div className="flex justify-between items-center">
-                  <h2 className="text-xl font-semibold">Generated Result</h2>
-                  {generatedPrompt && (
+              {generatedPrompt && (
+                <Card className="p-6 space-y-6">
+                  <div className="flex justify-between items-center">
+                    <h2 className="text-xl font-semibold">Generated Result</h2>
                     <Button variant="outline" size="icon" onClick={copyPrompt}>
                       <Copy className="h-4 w-4" />
                     </Button>
-                  )}
-                </div>
-                <PromptDisplay
-                  prompt={generatedPrompt}
-                  isLoading={isLoading}
-                  onGenerate={generatePrompt}
-                  hasImage={!!selectedImage}
-                />
-              </Card>
+                  </div>
+                  <p className="text-muted-foreground whitespace-pre-wrap">
+                    {generatedPrompt}
+                  </p>
+                </Card>
+              )}
             </div>
           </div>
         </div>
