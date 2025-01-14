@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Loader2, Wand2 } from "lucide-react";
+import { Loader2, Search } from "lucide-react";
 
 interface PromptDisplayProps {
   prompt: string;
@@ -15,7 +15,7 @@ const PromptDisplay = ({ prompt, isLoading, onGenerate, hasImage }: PromptDispla
       <Button
         onClick={onGenerate}
         disabled={!hasImage || isLoading}
-        className="w-full"
+        className="w-full bg-primary hover:bg-primary/90"
         size="lg"
       >
         {isLoading ? (
@@ -25,15 +25,15 @@ const PromptDisplay = ({ prompt, isLoading, onGenerate, hasImage }: PromptDispla
           </>
         ) : (
           <>
-            <Wand2 className="mr-2 h-4 w-4" />
-            Generate Prompt
+            <Search className="mr-2 h-4 w-4" />
+            Generate Description
           </>
         )}
       </Button>
 
       {(prompt || isLoading) && (
         <Card className="p-4">
-          <h3 className="font-semibold mb-2">Generated Prompt:</h3>
+          <h3 className="font-semibold mb-2">Generated Description:</h3>
           <p className="text-muted-foreground whitespace-pre-wrap">
             {isLoading ? "Generating..." : prompt}
           </p>
