@@ -1,5 +1,4 @@
 
-
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 let genAI: GoogleGenerativeAI;
@@ -27,10 +26,50 @@ export const getGeminiResponse = async (imageData: any) => {
 
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
   
-  const prompt = `You are a prompt generator. Write a prompt such that an image generator model would create a most identical picture as the image given to you. Be detailed but concise.`;
+  // JSON structured prompt
+  const promptJson = {
+    role: "prompt_generator",
+    task: "image_description",
+    instructions: "Generate a detailed but concise prompt that would allow an image generator to create an identical image to the one provided.",
+    output_format: "json"
+  };
+  
+  const promptText = JSON.stringify(promptJson);
+  
+  // Set the system prompt to request JSON response
+  const generationConfig = {
+    temperature: 0.4,
+    topK: 32,
+    topP: 0.95,
+    responseFormat: { type: "json" }
+  };
 
-  const result = await model.generateContent([prompt, imageData]);
-  const response = await result.response;
-  return response.text();
+  try {
+    const result = await model.generateContent(
+      [promptText, imageData],
+      { generationConfig }
+    );
+    
+    const response = await result.response;
+    const responseText = response.text();
+    
+    // Parse JSON response if possible
+    try {
+      const jsonResponse = JSON.parse(responseText);
+      return jsonResponse;
+    } catch (e) {
+      // If parsing fails, return the raw text
+      console.log("Failed to parse JSON response, returning raw text");
+      return { 
+        prompt: responseText,
+        format: "text"
+      };
+    }
+  } catch (error) {
+    console.error("Error generating content:", error);
+    return {
+      error: true,
+      message: error instanceof Error ? error.message : "Unknown error occurred"
+    };
+  }
 };
-
