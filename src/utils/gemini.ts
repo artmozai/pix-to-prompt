@@ -1,4 +1,5 @@
 
+
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 let genAI: GoogleGenerativeAI;
@@ -24,7 +25,7 @@ export const getGeminiResponse = async (imageData: any) => {
     throw new Error("Gemini API not initialized");
   }
 
-  const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
   
   const prompt = `You are a prompt generator. Write a prompt such that an image generator model would create a most identical picture as the image given to you. Be detailed but concise.`;
 
@@ -32,3 +33,4 @@ export const getGeminiResponse = async (imageData: any) => {
   const response = await result.response;
   return response.text();
 };
+
