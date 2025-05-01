@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -12,6 +13,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const Index = () => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -19,6 +27,7 @@ const Index = () => {
   const [generatedPrompt, setGeneratedPrompt] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [apiKey, setApiKey] = useState("");
+  const [selectedModel, setSelectedModel] = useState("gemini-1.5-flash-latest");
   const { toast } = useToast();
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -32,9 +41,13 @@ const Index = () => {
 
   useEffect(() => {
     const savedApiKey = localStorage.getItem("gemini_api_key");
+    const savedModel = localStorage.getItem("gemini_model") || "gemini-1.5-flash-latest";
+    
+    setSelectedModel(savedModel);
+    
     if (savedApiKey) {
       setApiKey(savedApiKey);
-      initializeGemini(savedApiKey);
+      initializeGemini(savedApiKey, savedModel);
     }
   }, []);
 
@@ -54,6 +67,50 @@ const Index = () => {
     document.documentElement.classList.toggle("dark", newTheme === "dark");
   };
 
+  const handleApiKeyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newApiKey = e.target.value;
+    setApiKey(newApiKey);
+    
+    // Auto-save when pasting or typing a complete key
+    if (newApiKey.length > 20) { // Assuming API keys are long
+      try {
+        localStorage.setItem("gemini_api_key", newApiKey);
+        initializeGemini(newApiKey, selectedModel);
+        toast({
+          title: "Success",
+          description: "Gemini API key has been saved",
+        });
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to save API key",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
+  const handleModelChange = (value: string) => {
+    setSelectedModel(value);
+    localStorage.setItem("gemini_model", value);
+    
+    if (apiKey) {
+      try {
+        initializeGemini(apiKey, value);
+        toast({
+          title: "Success",
+          description: `Model changed to ${value}`,
+        });
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to update model",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
   const handleApiKeySubmit = () => {
     if (!apiKey.trim()) {
       toast({
@@ -65,8 +122,9 @@ const Index = () => {
     }
 
     try {
-      initializeGemini(apiKey);
+      initializeGemini(apiKey, selectedModel);
       localStorage.setItem("gemini_api_key", apiKey);
+      localStorage.setItem("gemini_model", selectedModel);
       toast({
         title: "Success",
         description: "Gemini API key has been saved",
@@ -209,9 +267,21 @@ const Index = () => {
                       type="password"
                       placeholder="Enter your Gemini API key"
                       value={apiKey}
-                      onChange={(e) => setApiKey(e.target.value)}
+                      onChange={handleApiKeyChange}
                     />
                     <Button onClick={handleApiKeySubmit}>Save Key</Button>
+                  </div>
+                  <div className="space-y-2 mt-4">
+                    <label className="text-sm font-medium">Select Gemini Model</label>
+                    <Select value={selectedModel} onValueChange={handleModelChange}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select model" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="gemini-1.5-flash-latest">gemini-1.5-flash-latest</SelectItem>
+                        <SelectItem value="gemini-2.0-flash">gemini-2.0-flash</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                   <a
                     href="https://aistudio.google.com/apikey"

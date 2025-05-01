@@ -1,13 +1,76 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { initializeGemini } from "@/utils/gemini";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const GeminiKeyForm = ({ onKeySubmit }: { onKeySubmit: () => void }) => {
   const [apiKey, setApiKey] = useState("");
+  const [selectedModel, setSelectedModel] = useState("gemini-1.5-flash-latest");
   const { toast } = useToast();
+
+  useEffect(() => {
+    // Load saved model preference
+    const savedModel = localStorage.getItem("gemini_model");
+    if (savedModel) {
+      setSelectedModel(savedModel);
+    }
+  }, []);
+
+  const handleApiKeyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newApiKey = e.target.value;
+    setApiKey(newApiKey);
+    
+    // Auto-save when pasting or typing a complete key
+    if (newApiKey.length > 20) { // Assuming API keys are long
+      try {
+        localStorage.setItem("gemini_api_key", newApiKey);
+        initializeGemini(newApiKey, selectedModel);
+        toast({
+          title: "Success",
+          description: "Gemini API key has been saved",
+        });
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to save API key",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
+  const handleModelChange = (value: string) => {
+    setSelectedModel(value);
+    localStorage.setItem("gemini_model", value);
+    
+    // If we have an API key, initialize with the new model
+    const currentApiKey = apiKey || localStorage.getItem("gemini_api_key");
+    if (currentApiKey) {
+      try {
+        initializeGemini(currentApiKey, value);
+        toast({
+          title: "Success",
+          description: `Model changed to ${value}`,
+        });
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to update model",
+          variant: "destructive",
+        });
+      }
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,8 +84,9 @@ const GeminiKeyForm = ({ onKeySubmit }: { onKeySubmit: () => void }) => {
     }
 
     try {
-      initializeGemini(apiKey);
+      initializeGemini(apiKey, selectedModel);
       localStorage.setItem("gemini_api_key", apiKey);
+      localStorage.setItem("gemini_model", selectedModel);
       onKeySubmit();
       toast({
         title: "Success",
@@ -50,10 +114,22 @@ const GeminiKeyForm = ({ onKeySubmit }: { onKeySubmit: () => void }) => {
           type="password"
           placeholder="Enter your Gemini API key"
           value={apiKey}
-          onChange={(e) => setApiKey(e.target.value)}
+          onChange={handleApiKeyChange}
         />
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Select Gemini Model</label>
+          <Select value={selectedModel} onValueChange={handleModelChange}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select model" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="gemini-1.5-flash-latest">gemini-1.5-flash-latest</SelectItem>
+              <SelectItem value="gemini-2.0-flash">gemini-2.0-flash</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
         <Button type="submit" className="w-full">
-          Save API Key
+          Save Settings
         </Button>
       </form>
     </Card>
