@@ -30,7 +30,9 @@ export const getGeminiResponse = async (imageData: any) => {
 
   const model = genAI.getGenerativeModel({ model: selectedModel });
   
-  const prompt = `You are a prompt generator. Write a prompt such that an image generator model would create a most identical picture as the image given to you. Be detailed but concise.`;
+  const prompt = `You are a concise visual prompt generator. Given an image, describe it with maximum visual accuracy and minimal words. Focus on concrete visual traits such as subject, colors, pose, style, and background. Avoid long explanations, storytelling, or creative elaboration. Your goal is to generate a clear, efficient prompt that could be used by an image generation model to recreate the original image as closely as possible. Write in one or two concise sentences only.
+
+Format guideline: [Style] + [Subject] + [Key visual features] + [Pose/orientation] + [Background/environment].`;
 
   const result = await model.generateContent([prompt, imageData]);
   const response = await result.response;
