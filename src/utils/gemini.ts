@@ -23,16 +23,18 @@ export const fileToGenerativePart = async (file: File) => {
   };
 };
 
-export const getGeminiResponse = async (imageData: any) => {
+export const getGeminiResponse = async (imageData: any, customPrompt?: string) => {
   if (!genAI) {
     throw new Error("Gemini API not initialized");
   }
 
   const model = genAI.getGenerativeModel({ model: selectedModel });
   
-  const prompt = `You are a concise visual prompt generator. Given an image, describe it with maximum visual accuracy and minimal words. Focus on concrete visual traits such as subject, colors, pose, style, and background. Avoid long explanations, storytelling, or creative elaboration. Your goal is to generate a clear, efficient prompt that could be used by an image generation model to recreate the original image as closely as possible. Write in one or two concise sentences only.
-
-Format guideline: [Style] + [Subject] + [Key visual features] + [Pose/orientation] + [Background/environment].`;
+  const formatGuideline = "\n\nFormat: [Subject] + [Material/texture] + [Lighting/mood] + [Style/medium] + [Camera angle/composition] + [Background/environment].";
+  
+  const defaultPrompt = `You are a concise visual prompt generator for image generation. Given an image, describe it with precise visual traits, emphasizing subject, materials, lighting, mood, style, and composition. Use minimal words but include technical art details such as camera angle, texture, lighting type, and rendering style. Avoid storytelling or abstract terms.`;
+  
+  const prompt = (customPrompt || defaultPrompt) + formatGuideline;
 
   const result = await model.generateContent([prompt, imageData]);
   const response = await result.response;

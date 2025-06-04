@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import ImageUpload from "@/components/ImageUpload";
 import { useToast } from "@/components/ui/use-toast";
 import { fileToGenerativePart, getGeminiResponse, initializeGemini } from "@/utils/gemini";
@@ -32,6 +33,7 @@ const Index = () => {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [customPrompt, setCustomPrompt] = useState("You are a concise visual prompt generator for image generation. Given an image, describe it with precise visual traits, emphasizing subject, materials, lighting, mood, style, and composition. Use minimal words but include technical art details such as camera angle, texture, lighting type, and rendering style. Avoid storytelling or abstract terms.");
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme") as "dark" | "light" || "dark";
@@ -160,7 +162,7 @@ const Index = () => {
     setIsLoading(true);
     try {
       const imageData = await fileToGenerativePart(selectedImage);
-      const prompt = await getGeminiResponse(imageData);
+      const prompt = await getGeminiResponse(imageData, customPrompt);
       setGeneratedPrompt(prompt);
     } catch (error) {
       toast({
@@ -256,6 +258,16 @@ const Index = () => {
               >
                 {isLoading ? "Generating..." : "Generate Prompt"}
               </Button>
+              
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Custom System Prompt</label>
+                <Textarea
+                  placeholder="Enter custom system prompt..."
+                  value={customPrompt}
+                  onChange={(e) => setCustomPrompt(e.target.value)}
+                  className="min-h-[100px]"
+                />
+              </div>
             </div>
 
             <div className="space-y-6">
