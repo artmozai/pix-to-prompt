@@ -33,7 +33,11 @@ const Index = () => {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [customPrompt, setCustomPrompt] = useState("You are a concise visual prompt generator for image generation. Given an image, describe it with precise visual traits, emphasizing subject, materials, lighting, mood, style, and composition. Use minimal words but include technical art details such as camera angle, texture, lighting type, and rendering style. Avoid storytelling or abstract terms.");
+  const [customPrompt, setCustomPrompt] = useState(`You are a visual prompt generator for AI image generation. Analyze images and output precise, technical descriptions focusing on:
+Core Elements: Subject, style, materials, lighting, composition, colors, rendering technique
+Format: Comma-separated descriptive phrases using technical art vocabulary. No storytelling or emotions.
+Structure: "[Subject], [style], [materials/textures], [lighting], [colors], [composition/angle], [rendering quality]"
+Focus on reproducible visual elements that enable accurate image recreation.`);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme") as "dark" | "light" || "dark";
