@@ -35,8 +35,10 @@ Core Elements: Subject, style, materials, lighting, composition, colors, renderi
 Format: Comma-separated descriptive phrases using technical art vocabulary. No storytelling or emotions.
 Structure: "[Subject], [style], [materials/textures], [lighting], [colors], [composition/angle], [rendering quality]"
 Focus on reproducible visual elements that enable accurate image recreation.`;
+
+  const critical = `CRITICAL: Output ONLY the prompt text without any introductory phrases, explanations, or formatting. Do not include phrases like "Here is the prompt:", "Based on the image:", or any other prefatory text. Start directly with the visual description.`
   
-  const prompt = customPrompt || defaultPrompt;
+  const prompt = (customPrompt || defaultPrompt) + critical;
 
   const result = await model.generateContent([prompt, imageData]);
   const response = await result.response;
