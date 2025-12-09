@@ -204,8 +204,7 @@ Focus on reproducible visual elements that enable accurate image recreation.`);
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-6">
               <a href="/" className="text-xl font-bold">Beranda</a>
-              <a href="https://artmozai.blogspot.com/" target="_blank" rel="noopener noreferrer" className="text-sm hover:text-primary">Blog</a>
-              <a href="https://artmozai.hashnode.dev/" target="_blank" rel="noopener noreferrer" className="text-sm hover:text-primary">Hashnode</a>
+              <a href="https://www.artmozai.qzz.io" target="_blank" rel="noopener noreferrer" className="text-sm hover:text-primary">Blog</a>
               <a href="https://stock.adobe.com/uk/contributor/211463521/artmozai" target="_blank" rel="noopener noreferrer" className="text-sm hover:text-primary">Buy Image</a>
             </div>
             <div className="flex items-center gap-4">
