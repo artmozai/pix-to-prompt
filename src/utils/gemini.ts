@@ -1,8 +1,9 @@
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { DEFAULT_GEMINI_MODEL } from "@/lib/gemini-models";
 
 let genAI: GoogleGenerativeAI;
-let selectedModel: string = "gemini-1.5-flash-latest";
+let selectedModel: string = DEFAULT_GEMINI_MODEL;
 
 export const initializeGemini = (apiKey: string, model?: string) => {
   genAI = new GoogleGenerativeAI(apiKey);

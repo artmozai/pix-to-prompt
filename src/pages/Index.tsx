@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { GEMINI_MODELS, DEFAULT_GEMINI_MODEL } from "@/lib/gemini-models";
 
 const Index = () => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -28,7 +29,7 @@ const Index = () => {
   const [generatedPrompt, setGeneratedPrompt] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [apiKey, setApiKey] = useState("");
-  const [selectedModel, setSelectedModel] = useState("gemini-1.5-flash-latest");
+  const [selectedModel, setSelectedModel] = useState(DEFAULT_GEMINI_MODEL);
   const { toast } = useToast();
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -47,7 +48,7 @@ Focus on reproducible visual elements that enable accurate image recreation.`);
 
   useEffect(() => {
     const savedApiKey = localStorage.getItem("gemini_api_key");
-    const savedModel = localStorage.getItem("gemini_model") || "gemini-1.5-flash-latest";
+    const savedModel = localStorage.getItem("gemini_model") || DEFAULT_GEMINI_MODEL;
     
     setSelectedModel(savedModel);
     
@@ -293,8 +294,14 @@ Focus on reproducible visual elements that enable accurate image recreation.`);
                         <SelectValue placeholder="Select model" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="gemini-1.5-flash-latest">gemini-1.5-flash-latest</SelectItem>
-                        <SelectItem value="gemini-2.0-flash">gemini-2.0-flash</SelectItem>
+                        {GEMINI_MODELS.map((model) => (
+                          <SelectItem key={model.value} value={model.value}>
+                            <div className="flex flex-col">
+                              <span>{model.label}</span>
+                              <span className="text-xs text-muted-foreground">{model.description}</span>
+                            </div>
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
