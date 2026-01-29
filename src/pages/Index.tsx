@@ -61,7 +61,7 @@ Focus on reproducible visual elements that enable accurate image recreation.`);
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      window.open(`https://artmozai.blogspot.com/search?q=${encodeURIComponent(searchQuery)}`, '_blank');
+      window.open(`https://www.artmozai.qzz.io/search?q=${encodeURIComponent(searchQuery)}`, '_blank');
       setIsSearchOpen(false);
       setSearchQuery("");
     }
