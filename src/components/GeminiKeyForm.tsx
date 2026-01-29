@@ -12,10 +12,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { GEMINI_MODELS, DEFAULT_GEMINI_MODEL } from "@/lib/gemini-models";
 
 const GeminiKeyForm = ({ onKeySubmit }: { onKeySubmit: () => void }) => {
   const [apiKey, setApiKey] = useState("");
-  const [selectedModel, setSelectedModel] = useState("gemini-1.5-flash-latest");
+  const [selectedModel, setSelectedModel] = useState(DEFAULT_GEMINI_MODEL);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -123,8 +124,14 @@ const GeminiKeyForm = ({ onKeySubmit }: { onKeySubmit: () => void }) => {
               <SelectValue placeholder="Select model" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="gemini-1.5-flash-latest">gemini-1.5-flash-latest</SelectItem>
-              <SelectItem value="gemini-2.0-flash">gemini-2.0-flash</SelectItem>
+              {GEMINI_MODELS.map((model) => (
+                <SelectItem key={model.value} value={model.value}>
+                  <div className="flex flex-col">
+                    <span>{model.label}</span>
+                    <span className="text-xs text-muted-foreground">{model.description}</span>
+                  </div>
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
