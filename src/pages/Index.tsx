@@ -167,7 +167,7 @@ Focus on reproducible visual elements that enable accurate image recreation.`);
     setIsLoading(true);
     try {
       const imageData = await fileToGenerativePart(selectedImage);
-      const prompt = await getGeminiResponse(imageData, customPrompt);
+      const prompt = await getGeminiResponse(imageData);
       setGeneratedPrompt(prompt);
     } catch (error) {
       toast({
@@ -262,16 +262,6 @@ Focus on reproducible visual elements that enable accurate image recreation.`);
               >
                 {isLoading ? "Generating..." : "Generate Prompt"}
               </Button>
-              
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Custom System Prompt</label>
-                <Textarea
-                  placeholder="Enter custom system prompt..."
-                  value={customPrompt}
-                  onChange={(e) => setCustomPrompt(e.target.value)}
-                  className="min-h-[100px]"
-                />
-              </div>
             </div>
 
             <div className="space-y-6">
